@@ -29,7 +29,14 @@ phases:
           docker login --username AWS --password-stdin "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com"
   build:
     commands:
-      - docker build --file Dockerfile --tag "${IMAGE}:${VERSION}" .
+      - |
+        set -euo pipefail
+        docker build --file Dockerfile --tag "${IMAGE}:${VERSION}" .
+        # Copy the working directory without running the Lambda entrypoint.
+        CONTAINER_ID=$(docker create "${IMAGE}:${VERSION}")
+        trap 'docker rm "$CONTAINER_ID" >/dev/null' EXIT
+        mkdir -p image-files
+        docker cp "${CONTAINER_ID}:/var/task/." image-files/
   post_build:
     commands:
       - |
@@ -38,3 +45,8 @@ phases:
           exit 1
         fi
         docker push "${IMAGE}:${VERSION}"
+
+artifacts:
+  base-directory: image-files
+  files:
+    - '**/*'

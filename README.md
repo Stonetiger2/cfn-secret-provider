@@ -79,6 +79,13 @@ Its `.buildspec.yaml` logs in to ECR, builds the image using the committed
 AWS account and Region, without invoking Make or Pipenv. Image tags use the
 version in `.release`, adding a commit suffix when the checkout differs from
 the release tag and a `-dirty` suffix for local changes. No `latest` tag is pushed.
+CodeBuild also copies all files from the built image's working directory,
+`/var/task`, into an `image-files.zip` artifact. This contains the application
+files; Python dependencies installed elsewhere in the image are outside this directory.
+Deploy the updated `cloudformation/cicd-pipeline.yaml` to create the private S3
+artifact bucket and grant the build role upload access. The stack's
+`BuildArtifactsBucketName` output identifies the bucket; each build stores its
+ZIP under `builds/<build-id>/`. The bucket is retained when the stack is deleted.
 Run `make test-unit` for offline import, key serialization, and parameter-name tests.
 Run `make test` to validate CloudFormation templates and execute pytest. This
 requires AWS credentials, a configured region, and a dedicated test account:

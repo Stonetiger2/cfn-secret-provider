@@ -15,7 +15,7 @@ Resources:
         PrivilegedMode: true
       Source:
         Type: GITHUB
-        Location: https://github.com/binxio/cfn-secret-provider.git
+        Location: https://github.com/Stonetiger2/cfn-secret-provider.git
         BuildSpec: .buildspec.yaml
         GitCloneDepth: 0
         Auth:

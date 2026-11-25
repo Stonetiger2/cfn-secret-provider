@@ -74,6 +74,11 @@ Install dependencies with `pipenv sync --dev`. After changing `Pipfile`, run
 
 From Bash (or WSL on Windows), run `make build` to build the Lambda image with
 Docker. CodeBuild uses the same Dockerfile and does not select a separate Python runtime.
+Its `.buildspec.yaml` logs in to ECR, builds the image using the committed
+`requirements.txt`, and pushes it to `xebia/cfn-secret-provider` in the build's
+AWS account and Region, without invoking Make or Pipenv. Image tags use the
+version in `.release`, adding a commit suffix when the checkout differs from
+the release tag and a `-dirty` suffix for local changes. No `latest` tag is pushed.
 Run `make test-unit` for offline import, key serialization, and parameter-name tests.
 Run `make test` to validate CloudFormation templates and execute pytest. This
 requires AWS credentials, a configured region, and a dedicated test account:

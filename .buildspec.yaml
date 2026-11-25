@@ -1,8 +1,40 @@
 ---
 version: 0.2
+env:
+  shell: bash
 phases:
   # Python is supplied by the Lambda base image in Dockerfile.
+  pre_build:
+    commands:
+      - |
+        set -euo pipefail
+        export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION}}"
+        AWS_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+        export IMAGE="${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/xebia/cfn-secret-provider"
+
+        # Match the release/snapshot versioning previously used by make snapshot.
+        VERSION=$(awk -F= '/^release=/{print $2}' .release)
+        RELEASE_TAG=$(awk -F= '/^tag=/{print $2}' .release)
+        test -n "$VERSION"
+        test -n "$RELEASE_TAG"
+        if ! git show-ref --verify --quiet "refs/tags/${RELEASE_TAG}" ||
+           ! git diff --quiet "$RELEASE_TAG" -- .; then
+          VERSION="${VERSION}-$(git log -n 1 --format=%h -- .)"
+        fi
+        if [ -n "$(git status --short -- .)" ]; then
+          VERSION="${VERSION}-dirty"
+        fi
+        export VERSION
+        aws ecr get-login-password --region "$AWS_REGION" |
+          docker login --username AWS --password-stdin "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com"
   build:
     commands:
-      - make ecr-login
-      - make snapshot
+      - docker build --file Dockerfile --tag "${IMAGE}:${VERSION}" .
+  post_build:
+    commands:
+      - |
+        # CodeBuild also enters post_build after a failed build.
+        if [ "$CODEBUILD_BUILD_SUCCEEDING" != "1" ]; then
+          exit 1
+        fi
+        docker push "${IMAGE}:${VERSION}"

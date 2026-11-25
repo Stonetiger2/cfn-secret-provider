@@ -9,18 +9,19 @@ IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
 TAG_WITH_LATEST=never
 
 
-Pipfile.lock: Pipfile requirements.txt test-requirements.txt
-
-requirements.txt test-requirements.txt: Pipfile
+requirements.txt test-requirements.txt: Pipfile.lock
 	pipenv requirements > requirements.txt
 	pipenv requirements --dev-only > test-requirements.txt
 
 Pipfile.lock: Pipfile
-	pipenv update
+	pipenv lock
 
 test: Pipfile.lock
 	for n in ./cloudformation/*.yaml ; do aws cloudformation validate-template --template-body file://$$n ; done
-	PYTHONPATH=$(PWD)/src pipenv run pytest ./tests/test*.py
+	PYTHONPATH=$(PWD)/src pipenv run pytest tests
+
+test-unit: Pipfile.lock
+	PYTHONPATH=$(PWD)/src pipenv run pytest tests/unit tests/test_ssm_parameter_name.py
 
 pre-build: requirements.txt
 

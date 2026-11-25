@@ -3,7 +3,7 @@ import hashlib
 import uuid
 from base64 import b64encode, b64decode
 from cfn_secret_provider import SecretProvider
-from secrets import handler
+from cfn_secret_handler import handler
 from collections import Counter
 
 kms = boto3.client("kms")

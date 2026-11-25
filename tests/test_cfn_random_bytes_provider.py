@@ -3,7 +3,7 @@ import hashlib
 import uuid
 from base64 import b64encode, b64decode
 from cfn_random_bytes_provider import RandomBytesProvider
-from secrets import handler
+from cfn_secret_handler import handler
 
 kms = boto3.client("kms")
 

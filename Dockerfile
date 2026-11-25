@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.9
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.14
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
@@ -11,4 +11,4 @@ COPY src/ ./
 RUN find . -type d -print0 | xargs -0 chmod ugo+rx && \
     find . -type f -print0 | xargs -0 chmod ugo+r
 
-CMD [ "secrets.handler" ]
+CMD [ "cfn_secret_handler.handler" ]

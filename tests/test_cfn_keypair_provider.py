@@ -2,7 +2,7 @@ import sys
 import boto3
 import uuid
 from cfn_keypair_provider import KeyPairProvider
-from secrets import handler
+from cfn_secret_handler import handler
 
 
 def test_defaults():

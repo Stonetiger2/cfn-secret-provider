@@ -3,7 +3,7 @@ import uuid
 
 import boto3
 
-from secrets import handler
+from cfn_secret_handler import handler
 from ssm_parameter_name import arn_regexp
 
 ssm_west_1 = boto3.client("ssm", region_name="eu-west-1")

@@ -15,18 +15,18 @@ Resources:
         PrivilegedMode: true
       Source:
         Type: GITHUB
-        Location: https://github.com/binxio/cfn-secret-provider.git
+        Location: https://github.com/Stonetiger2/cfn-secret-provider.git
         BuildSpec: .buildspec.yaml
         GitCloneDepth: 0
-        Auth:
-          Type: OAUTH
-      Triggers:
-        FilterGroups:
-         -  - Type: EVENT
-              Pattern: PUSH
-            - Type: HEAD_REF
-              Pattern: "refs/tags/.*"
-        Webhook: true
+        # Auth:
+        #   Type: OAUTH
+      # Triggers:
+      #   FilterGroups:
+      #    -  - Type: EVENT
+      #         Pattern: PUSH
+      #       - Type: HEAD_REF
+      #         Pattern: "refs/tags/.*"
+      #   Webhook: true
 
   ProjectRole:
     Type: AWS::IAM::Role

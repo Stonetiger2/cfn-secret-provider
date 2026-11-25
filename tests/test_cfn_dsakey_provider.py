@@ -2,7 +2,7 @@ import sys
 import uuid
 import hashlib
 from cfn_dsakey_provider import DSAKeyProvider
-from secrets import handler
+from cfn_secret_handler import handler
 
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 from cryptography.hazmat.backends import default_backend

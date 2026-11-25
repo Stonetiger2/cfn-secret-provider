@@ -63,6 +63,22 @@ you would use this in the [Custom::KeyPair](docs/KeyPair.md) resource, to create
 This will create the ec2 key pair for you named `CustomKeyPair`, based on the generated private key. Now private key is securely stored in the EC2 Parameter Store and the public key can be used to gain access to specific EC2 instances. See [Amazon EC2 Key Pairs](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) for more information.
 
 
+## Development
+
+Use Python 3.14 and Pipenv. The Lambda container also runs Python 3.14.
+The Lambda entrypoint is `cfn_secret_handler.handler`; deployments overriding
+the image command must use this name instead of `secrets.handler`.
+Install dependencies with `pipenv sync --dev`. After changing `Pipfile`, run
+`pipenv lock`, `pipenv requirements > requirements.txt`, and
+`pipenv requirements --dev-only > test-requirements.txt`; commit all dependency files together.
+
+From Bash (or WSL on Windows), run `make build` to build the Lambda image with
+Docker. CodeBuild uses the same Dockerfile and does not select a separate Python runtime.
+Run `make test-unit` for offline import, key serialization, and parameter-name tests.
+Run `make test` to validate CloudFormation templates and execute pytest. This
+requires AWS credentials, a configured region, and a dedicated test account:
+the integration tests create and delete real AWS resources.
+
 ## Installation
 To install these custom resources, type:
 

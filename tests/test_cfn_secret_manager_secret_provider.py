@@ -5,7 +5,7 @@ from base64 import b64encode
 from cfn_secrets_manager_secret_provider import (
     SecretsManagerSecretProvider as SecretProvider,
 )
-from secrets import handler
+from cfn_secret_handler import handler
 
 
 def test_defaults():

@@ -80,8 +80,9 @@ AWS account and Region, without invoking Make or Pipenv. Image tags use the
 version in `.release`, adding a commit suffix when the checkout differs from
 the release tag and a `-dirty` suffix for local changes. No `latest` tag is pushed.
 CodeBuild also copies all files from the built image's working directory,
-`/var/task`, into an `image-files.zip` artifact. This contains the application
-files; Python dependencies installed elsewhere in the image are outside this directory.
+`/var/task`, into an `image-files.zip` artifact. The Dockerfile installs
+`requirements.txt` into this directory, so the artifact includes the application,
+all installed dependencies, package metadata, and bundled native libraries.
 Deploy the updated `cloudformation/cicd-pipeline.yaml` to create the private S3
 artifact bucket and grant the build role upload access. The stack's
 `BuildArtifactsBucketName` output identifies the bucket; each build stores its

@@ -108,7 +108,7 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: xebia/cfn-secret-provider
-      ImageTagMutability: IMMUTABLE
+      ImageTagMutability: MUTABLE
       RepositoryPolicyText:
         Version: '2012-10-17'
         Statement:

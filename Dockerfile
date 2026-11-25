@@ -4,7 +4,8 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+# Keep installed packages with the application for the CodeBuild artifact.
+RUN pip install --target "${LAMBDA_TASK_ROOT}" -r requirements.txt
 
 COPY src/ ./
 
